@@ -44,21 +44,23 @@ void ads1299_init()
         while (1);
     }
 
-    // Some Configs:
-    // Turn on Reference buffer and Bias buffer in CONFIG3
+    // EMG Configs:
+    // Set CONFIG1 for 1 kHz sampling rate (0x94 = 1000 SPS)
+    ads1299_write_reg(CONFIG1, 0x94);
+    // Turn on Reference buffer, disable Bias buffer for EMG in CONFIG3
     // Set Test signal configs in CONFIG2
-    ads1299_write_reg(CONFIG3, 0x60 | 1 << 7 | 1 << 2);
+    ads1299_write_reg(CONFIG3, 0x60 | 1 << 7);  // Reference buffer ON, Bias buffer OFF
     ads1299_write_reg(CONFIG2, 0xC0 | ADS1299_TEST_INT | ADS1299_TESTSIGNAL_PULSE_FAST);
 
-    // All Channels are PGA = 24 | Normal Input | Powered down except Channel 8
-    ads1299_write_reg(CH1SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
-    ads1299_write_reg(CH2SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
-    ads1299_write_reg(CH3SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
-    ads1299_write_reg(CH4SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
-    ads1299_write_reg(CH5SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
-    ads1299_write_reg(CH6SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
-    ads1299_write_reg(CH7SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
-    ads1299_write_reg(CH8SET, ADS1299_PGA_GAIN24 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    // All Channels are PGA = 6 | Normal Input | Powered down (EMG optimized)
+    ads1299_write_reg(CH1SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    ads1299_write_reg(CH2SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    ads1299_write_reg(CH3SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    ads1299_write_reg(CH4SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    ads1299_write_reg(CH5SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    ads1299_write_reg(CH6SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    ads1299_write_reg(CH7SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
+    ads1299_write_reg(CH8SET, ADS1299_PGA_GAIN06 | ADS1299_INPUT_NORMAL | ADS1299_INPUT_PWR_DOWN);
 
     // Configure Lead Off Options in LOFF: Set AC lead-off at 62.5hz (f_DR/4)
     ads1299_write_reg(LOFF, LOFF_FREQ_FS_4);

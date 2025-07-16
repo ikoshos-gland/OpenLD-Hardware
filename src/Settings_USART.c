@@ -34,7 +34,7 @@ void setting_mode()
     NVIC_DisableIRQ(USART6_IRQn);
 
     STX("*********************************************\n");
-    STX("*          SETTINGS MODE                    *\n");
+    STX("*          EMG SETTINGS MODE                *\n");
     STX("*===========================================*\n");
     STX("* OPTIONS:                                  *\n");
     STX("*  - C_CHANNEL + OPT: SET CHANNEL           *\n");
@@ -44,6 +44,7 @@ void setting_mode()
     STX("*  - S: PRINT ALL SETTINGS                  *\n");
     STX("*  - P: PRINT CHANNEL CONFIGS               *\n");
     STX("*  - E: Quit                                *\n");
+    STX("* EMG: 1kHz, 10-450Hz, 6x gain, RMS+ENV    *\n");
     STX("*********************************************\n");
 
     while (1) {
@@ -106,12 +107,12 @@ void setting_mode()
                 if (BIOEXG_SETTINGS & SETTINGS_BIT_CHANNEL(input_str_cmd[1] - '1')) {
                     // Magic happens underneath (input_str_cmd[1] - '1' + CH1SET), don't touch
                     ads1299_write_reg((uint8_t) input_str_cmd[1] - '1' + CH1SET, ADS1299_INPUT_PWR_UP
-                                      | ADS1299_PGA_GAIN24 | input_opt);
+                                      | ADS1299_PGA_GAIN06 | input_opt);
                     STX(": ON\n");
 
                 } else {
                     ads1299_write_reg((uint8_t) input_str_cmd[1] - '1' + CH1SET, ADS1299_INPUT_PWR_DOWN
-                                      | ADS1299_PGA_GAIN24 | input_opt);
+                                      | ADS1299_PGA_GAIN06 | input_opt);
                     STX(": OFF\n");
                 }
 

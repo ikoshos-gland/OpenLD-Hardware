@@ -60,12 +60,18 @@
     extern void PREG(uint32_t R0);
     extern void PDEC(uint32_t R0);
 
-    // Analysis Functions & Definitions & Variables
-    #define ADS1299_SIGNAL_WINDOW 250
+    // Analysis Functions & Definitions & Variables - Updated for 1 kHz EMG
+    #define ADS1299_SIGNAL_WINDOW 1000
+    
+    // EMG-specific processing
+    #define EMG_ENVELOPE_WINDOW 100  // 100ms window for envelope detection
+    extern float32_t emg_rectified[ADS1299_CHANNELS][ADS1299_SIGNAL_WINDOW];
+    extern float32_t emg_envelope[ADS1299_CHANNELS];
+    extern float32_t emg_rms[ADS1299_CHANNELS];
 
-    // IIR Structures
-    #define BIQUAD_STAGES_HP 39
-    #define BIQUAD_STAGES_BP 21
+    // IIR Structures - Updated for EMG
+    #define BIQUAD_STAGES_HP 3
+    #define BIQUAD_STAGES_BP 3
     extern arm_biquad_cascade_df2T_instance_f32 biquad_HP_Struct[ADS1299_CHANNELS];
     extern float32_t biquad_HP_State[ADS1299_CHANNELS][2 * BIQUAD_STAGES_HP];
     extern float32_t biquad_HP_Coeffs[5 * BIQUAD_STAGES_HP];

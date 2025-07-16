@@ -41,6 +41,11 @@ int32_t rms_Impedance_Integer[ADS1299_CHANNELS];
 float32_t data_Signal_Float[ADS1299_CHANNELS][ADS1299_SIGNAL_WINDOW];
 int32_t data_Signal_Integer[ADS1299_CHANNELS][ADS1299_SIGNAL_WINDOW];
 
+// EMG-specific processing arrays
+float32_t emg_rectified[ADS1299_CHANNELS][ADS1299_SIGNAL_WINDOW];
+float32_t emg_envelope[ADS1299_CHANNELS];
+float32_t emg_rms[ADS1299_CHANNELS];
+
 void EXTI9_5_IRQHandler()
 {
     int32_t REALS[8];
@@ -68,9 +73,10 @@ void EXTI9_5_IRQHandler()
             // PDEC((uint32_t)data_Signal_Integer[i][counterData]);
             // CTX(' ');
 
-            // Converting Integer to Scaled Floating Point for Impedance checking
-            // Range/(2^23 - 1) = 2.2351744...E-5
-            data_Signal_Float[i][counterData] = ((float32_t)REALS[i]) * 2.235174445E-5;
+            // Converting Integer to Scaled Floating Point for EMG processing
+            // Range/(2^23 - 1) adjusted for 6x gain instead of 24x gain
+            // EMG scaling factor = 2.2351744...E-5 * 4 = 8.9407E-5
+            data_Signal_Float[i][counterData] = ((float32_t)REALS[i]) * 8.9407E-5;
         }
     }
 
@@ -170,6 +176,46 @@ void EXTI0_IRQHandler()
         }
     }
 
+    // EMG-specific processing for all active channels
+    for (i = 0; i < 8; i++) {
+        if (BIOEXG_SETTINGS & SETTINGS_BIT_CHANNEL(i)) {
+            
+            /***************************
+            * EMG SIGNAL PROCESSING    *
+            ***************************/
+            
+            // Step 1: Apply high-pass and low-pass filters to EMG data
+            arm_biquad_cascade_df2T_f32(&biquad_HP_Struct[i], data_Signal_Float[i], output_IIR_IMPEDANCE[i], ADS1299_SIGNAL_WINDOW);
+            for (j = 0; j < ADS1299_SIGNAL_WINDOW; j++) output_IIR_IMPEDANCE[i][j] *= biquad_HP_Output_Gain;
+            
+            arm_biquad_cascade_df2T_f32(&biquad_BP_Struct[i], output_IIR_IMPEDANCE[i], output_IIR[i], ADS1299_SIGNAL_WINDOW);
+            for (j = 0; j < ADS1299_SIGNAL_WINDOW; j++) output_IIR[i][j] *= biquad_BP_Output_Gain;
+            
+            // Step 2: Full-wave rectification
+            for (j = 0; j < ADS1299_SIGNAL_WINDOW; j++) {
+                emg_rectified[i][j] = arm_fabsf(output_IIR[i][j]);
+            }
+            
+            // Step 3: Calculate RMS (Root Mean Square) for muscle activity level
+            float32_t sum_squares = 0.0f;
+            for (j = 0; j < ADS1299_SIGNAL_WINDOW; j++) {
+                sum_squares += emg_rectified[i][j] * emg_rectified[i][j];
+            }
+            sum_squares /= ADS1299_SIGNAL_WINDOW;
+            arm_sqrt_f32(sum_squares, &emg_rms[i]);
+            
+            // Step 4: Calculate envelope (moving average of rectified signal)
+            float32_t envelope_sum = 0.0f;
+            uint32_t envelope_start = (ADS1299_SIGNAL_WINDOW > EMG_ENVELOPE_WINDOW) ? 
+                                     (ADS1299_SIGNAL_WINDOW - EMG_ENVELOPE_WINDOW) : 0;
+            
+            for (j = envelope_start; j < ADS1299_SIGNAL_WINDOW; j++) {
+                envelope_sum += emg_rectified[i][j];
+            }
+            emg_envelope[i] = envelope_sum / EMG_ENVELOPE_WINDOW;
+        }
+    }
+
     CTX('I'); // SEND DATA TYPE - IMPEDANCE MEASUREMENT
     for (i = 0; i < 8; i++) {
         if (BIOEXG_SETTINGS & SETTINGS_BIT_IMP(i)) {
@@ -184,6 +230,26 @@ void EXTI0_IRQHandler()
     }
     CTX('\n'); // SEND ENDLINE
 
+    // Send EMG-specific data
+    CTX('R'); // SEND DATA TYPE - EMG RMS VALUES
+    for (i = 0; i < 8; i++) {
+        if (BIOEXG_SETTINGS & SETTINGS_BIT_CHANNEL(i)) {
+            uint32_t rms_integer = (uint32_t)(emg_rms[i] * 10000.0f);
+            PDEC(rms_integer);
+            CTX(' ');
+        }
+    }
+    CTX('\n'); // SEND ENDLINE
+
+    CTX('E'); // SEND DATA TYPE - EMG ENVELOPE VALUES
+    for (i = 0; i < 8; i++) {
+        if (BIOEXG_SETTINGS & SETTINGS_BIT_CHANNEL(i)) {
+            uint32_t envelope_integer = (uint32_t)(emg_envelope[i] * 10000.0f);
+            PDEC(envelope_integer);
+            CTX(' ');
+        }
+    }
+    CTX('\n'); // SEND ENDLINE
 
     /* Print status for the External Interface */
     // Print out value for inverted PD9, shifted 9 (cause of pullup resistor)
