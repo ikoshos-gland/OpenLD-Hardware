@@ -61,7 +61,7 @@
     extern void PDEC(uint32_t R0);
 
     // Analysis Functions & Definitions & Variables - Updated for 1 kHz EMG
-    #define ADS1299_SIGNAL_WINDOW 1000
+    #define ADS1299_SIGNAL_WINDOW 200
     
     // EMG-specific processing
     #define EMG_ENVELOPE_WINDOW 100  // 100ms window for envelope detection

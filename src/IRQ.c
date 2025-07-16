@@ -193,7 +193,7 @@ void EXTI0_IRQHandler()
             
             // Step 2: Full-wave rectification
             for (j = 0; j < ADS1299_SIGNAL_WINDOW; j++) {
-                emg_rectified[i][j] = arm_fabsf(output_IIR[i][j]);
+                emg_rectified[i][j] = (output_IIR[i][j] < 0) ? -output_IIR[i][j] : output_IIR[i][j];
             }
             
             // Step 3: Calculate RMS (Root Mean Square) for muscle activity level
