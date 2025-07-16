@@ -40,20 +40,28 @@ arm_biquad_cascade_df2T_instance_f32 biquad_BP_Struct[ADS1299_CHANNELS];
 
 int main()
 {
+    // EMG System Initialization
+    // This system has been converted from EEG to EMG signal acquisition
+    // Key changes: 1kHz sampling, 10-450Hz filtering, 6x gain, EMG processing
 
     // Peripheral Configs
     init_GPIO();
     __enable_irq();
     init_USART6();
 
-    // Initialize IIR filters for Real Time Impedance Calculation
+    // Initialize IIR filters for EMG Signal Processing
+    // HP filter: 10Hz cutoff (removes DC and motion artifacts)
+    // BP filter: 450Hz cutoff (EMG bandwidth limitation)
     for (int i = 0; i < ADS1299_CHANNELS; i++) {
         arm_biquad_cascade_df2T_init_f32(&biquad_HP_Struct[i], BIQUAD_STAGES_HP, biquad_HP_Coeffs, biquad_HP_State[i]);
         arm_biquad_cascade_df2T_init_f32(&biquad_BP_Struct[i], BIQUAD_STAGES_BP, biquad_BP_Coeffs, biquad_BP_State[i]);
     }
 
+    // Initialize ADS1299 for EMG (1kHz sampling, 6x gain)
     init_SPI1();
     ads1299_init();
     init_EXTI();
+    
+    // Main loop - EMG data processing happens in IRQ handlers
     while (1); //__WFI();
 }
