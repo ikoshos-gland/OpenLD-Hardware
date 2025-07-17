@@ -1,0 +1,42 @@
+[
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/Delay.c",
+    "file": "src/Delay.c"
+  },
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/IRQ.c",
+    "file": "src/IRQ.c"
+  },
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/Peripheral_Init.c",
+    "file": "src/Peripheral_Init.c"
+  },
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/Settings_UART.c",
+    "file": "src/Settings_UART.c"
+  },
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/cmd_ADS1299.c",
+    "file": "src/cmd_ADS1299.c"
+  },
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/cmd_UART.c",
+    "file": "src/cmd_UART.c"
+  },
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/coeffs_IIR.c",
+    "file": "src/coeffs_IIR.c"
+  },
+  {
+    "directory": "/home/mertoshi/OpenLD-Hardware/STM32H7S3L8_EMG_Port",
+    "command": "clang -c -std=c11   -mlittle-endian    -g -Wall -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -DSTM32H7S3xx -DSTM32H7S3L8 -DUSE_HAL_DRIVER -DUSE_FULL_LL_DRIVER -DARM_MATH_CM7 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -DDATA_IN_AXI_SRAM -DUSE_CACHE_OPTIMIZATION -Iinc -ISTM32CubeH7RS/Drivers/CMSIS/Include -ISTM32CubeH7RS/Drivers/CMSIS/Core/Include -ISTM32CubeH7RS/Drivers/CMSIS/Device/ST/STM32H7RSxx/Include -Istm32h7rsxx-hal-driver/Inc -ICMSIS-DSP/Include -ICMSIS-DSP/PrivateInclude -I/usr/include -c src/main.c",
+    "file": "src/main.c"
+  }
+]

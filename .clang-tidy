@@ -1,0 +1,36 @@
+---
+Checks: >
+  clang-analyzer-*,
+  misc-*,
+  cert-*,
+  readability-*,
+  performance-*,
+  portability-*,
+  bugprone-*,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -android-*,
+  -fuchsia-*,
+  -google-*,
+  -zircon-*,
+  -llvmlibc-*,
+  -altera-*,
+  -readability-function-cognitive-complexity,
+  -cert-dcl37-c,
+  -cert-dcl51-cpp,
+  -bugprone-reserved-identifier,
+  -readability-identifier-length,
+  -bugprone-easily-swappable-parameters,
+  -readability-isolate-declaration,
+  -readability-uppercase-literal-suffix,
+  -readability-avoid-const-params-in-decls,
+  -misc-include-cleaner,
+  -performance-no-int-to-ptr
+
+HeaderFilterRegex: 'src/.*'
+WarningsAsErrors: ''
+CheckOptions:
+  - key: readability-identifier-length.MinimumVariableNameLength
+    value: 1
+  - key: readability-identifier-length.MinimumParameterNameLength
+    value: 1
