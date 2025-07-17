@@ -54,15 +54,19 @@ char UART_ReceiveChar()
 void UART_PrintHex(uint32_t value)
 {
     char hex_str[16];
-    sprintf(hex_str, "0x%08X", (unsigned int)value);
-    UART_Transmit(hex_str);
+    int result = snprintf(hex_str, sizeof(hex_str), "0x%08X", (unsigned int)value);
+    if (result > 0 && result < (int)sizeof(hex_str)) {
+        UART_Transmit(hex_str);
+    }
 }
 
 void UART_PrintDec(uint32_t value)
 {
     char dec_str[16];
-    sprintf(dec_str, "%u", (unsigned int)value);
-    UART_Transmit(dec_str);
+    int result = snprintf(dec_str, sizeof(dec_str), "%u", (unsigned int)value);
+    if (result > 0 && result < (int)sizeof(dec_str)) {
+        UART_Transmit(dec_str);
+    }
 }
 
 // Assembly-style compatibility functions

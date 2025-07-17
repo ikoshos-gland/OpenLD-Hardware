@@ -1,0 +1,151 @@
+# Renode Configuration for STM32H7S3L8 EMG Port
+# Advanced hardware-in-the-loop simulation
+# Usage: renode -e "s @stm32h7s3l8_emg.resc"
+
+# Create the machine
+mach create "STM32H7S3L8_EMG"
+
+# Load STM32H7S3L8 platform
+machine LoadPlatformDescription @platforms/cpus/stm32h7s3l8.repl
+
+# Configure system settings
+machine SetClockSource cpu
+cpu MaximumBlockSize 1024
+cpu PerformanceInMips 1100
+
+# Configure memory regions (STM32H7S3L8 specific)
+# Flash memory: 2MB at 0x08000000
+sysbus LoadELF @bin/emg_h7s3l8.elf
+
+# AXI SRAM: 512KB at 0x20000000 (high-speed data processing)
+sysbus LoadSegment @bin/emg_h7s3l8.elf 0x20000000
+
+# SRAM1: 128KB at 0x10000000 (filter coefficients)
+# SRAM2: 128KB at 0x10020000 (processed data)
+# SRAM3: 32KB at 0x10040000 (system variables)
+# SRAM4: 64KB at 0x10050000 (available for expansion)
+
+# Configure peripherals for EMG system
+# UART1 for data communication (230400 baud)
+emulation CreateUartPtyTerminal "uart1" "/tmp/uart1" true
+connector Connect uart1 sysbus.uart1
+
+# SPI1 for ADS1299 communication
+emulation CreateSPIFlash "ads1299" "W25Q128" 0x1000000
+connector Connect sysbus.spi1 ads1299
+
+# GPIO for control signals
+emulation CreateGPIO "emg_gpio" 16
+connector Connect sysbus.gpio emg_gpio
+
+# Timer for sampling control (1kHz)
+emulation CreateTimer "sampling_timer" 1000000 # 1kHz in microseconds
+
+# External interrupt for data ready signal
+emulation CreateExternalInterrupt "data_ready" 0
+
+# Configure EMG-specific features
+# Virtual ADS1299 signal generator
+python "
+import random
+import math
+import time
+
+class VirtualADS1299:
+    def __init__(self):
+        self.channels = 8
+        self.sample_rate = 1000  # 1kHz
+        self.amplitude = 1000.0
+        self.frequency = 50.0
+        self.noise_level = 0.1
+        self.sample_count = 0
+        self.data_ready = False
+        
+    def generate_emg_sample(self, channel):
+        # Generate realistic EMG signal
+        t = self.sample_count / self.sample_rate
+        
+        # Base EMG signal (multiple frequency components)
+        signal = 0
+        signal += math.sin(2 * math.pi * 50 * t) * self.amplitude * 0.3
+        signal += math.sin(2 * math.pi * 80 * t) * self.amplitude * 0.2
+        signal += math.sin(2 * math.pi * 120 * t) * self.amplitude * 0.15
+        
+        # Add channel-specific variation
+        signal *= (1.0 + channel * 0.1)
+        
+        # Add noise
+        signal += (random.random() - 0.5) * self.amplitude * self.noise_level
+        
+        # Convert to 24-bit ADC value
+        adc_value = int(signal * 1000)
+        if adc_value > 8388607:
+            adc_value = 8388607
+        elif adc_value < -8388608:
+            adc_value = -8388608
+            
+        return adc_value
+        
+    def update(self):
+        self.sample_count += 1
+        self.data_ready = True
+        
+    def get_data(self):
+        data = []
+        for ch in range(self.channels):
+            data.append(self.generate_emg_sample(ch))
+        self.data_ready = False
+        return data
+
+# Create virtual ADS1299 instance
+virtual_ads1299 = VirtualADS1299()
+
+# Hook into SPI communication
+def spi_write_hook(value):
+    if value == 0x10:  # START command
+        virtual_ads1299.data_ready = True
+    elif value == 0x11:  # STOP command
+        virtual_ads1299.data_ready = False
+    return 0x00
+
+def spi_read_hook():
+    if virtual_ads1299.data_ready:
+        return virtual_ads1299.get_data()
+    return [0] * 8
+
+# Register hooks
+machine.SystemBus.spi1.WriteHook += spi_write_hook
+machine.SystemBus.spi1.ReadHook += spi_read_hook
+
+# Timer callback for 1kHz sampling
+def timer_callback():
+    virtual_ads1299.update()
+    machine.SystemBus.gpio.SetState(2, virtual_ads1299.data_ready)  # DRDY pin
+
+# Register timer callback
+machine.SystemBus.timer.Elapsed += timer_callback
+"
+
+# Configure logging for debugging
+logLevel -1 uart1
+logLevel 0 sysbus.spi1
+logLevel 0 emg_gpio
+
+# Display configuration
+showAnalyzer uart1
+showAnalyzer sysbus.spi1
+
+# Start emulation
+echo "STM32H7S3L8 EMG Port Emulation Started"
+echo "UART1 terminal: /tmp/uart1"
+echo "SPI1 ADS1299: Virtual signal generator active"
+echo "GPIO: 16 pins available"
+echo "Timer: 1kHz sampling rate"
+echo ""
+echo "Commands:"
+echo "  start                 - Start emulation"
+echo "  pause                 - Pause emulation"
+echo "  reset                 - Reset system"
+echo "  quit                  - Exit emulation"
+echo ""
+echo "To start: type 'start' and press Enter"

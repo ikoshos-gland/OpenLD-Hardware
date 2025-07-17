@@ -51,7 +51,7 @@ uint32_t counterData = 0;
 uint32_t bufferIndex = 0;
 
 // System clock variable (required by HAL)
-uint32_t SystemCoreClock = 550000000;  // 550MHz system clock
+uint32_t SystemCoreClock = 600000000;  // 600MHz system clock (STM32H7S3L8 standard)
 uint32_t processingComplete = 0;
 
 // FFT instance for spectral analysis
@@ -77,7 +77,7 @@ int main(void)
 {
     // STM32H7S3L8 EMG System Initialization
     // This system has been enhanced from the STM32F407VG version with:
-    // - 2.5x faster processing (550MHz vs 168MHz)
+    // - 3.6x faster processing (600MHz vs 168MHz)
     // - 4x larger signal buffers (800 vs 200 samples)
     // - Advanced spectral analysis capabilities
     // - Enhanced memory management with multiple SRAM regions
@@ -91,7 +91,7 @@ int main(void)
     
     // System ready indication
     UART_Transmit("STM32H7S3L8 EMG System Ready!\n");
-    UART_Transmit("Enhanced features: 4x buffer size, 2.5x processing speed\n");
+    UART_Transmit("Enhanced features: 4x buffer size, 3.6x processing speed\n");
     UART_Transmit("Memory: AXI SRAM (buffers), SRAM1 (filters), SRAM2 (results)\n");
     
     // Main loop - EMG data processing happens in IRQ handlers
@@ -245,7 +245,7 @@ void emg_calculate_features(void)
 void SystemClock_Config(void)
 {
     // System clock configuration handled in SystemInit_H7S3L8()
-    // 550MHz system clock from PLL
+    // 600MHz system clock from PLL1 (STM32H7S3L8 standard)
 }
 
 void Error_Handler(void)
@@ -314,12 +314,14 @@ void performance_monitor(void)
     uint32_t cycles = current_counter - last_counter;
     
     if (cycles > 0) {
-        float32_t cpu_utilization = (float32_t)cycles / (SYSTEM_CLOCK_FREQ / 1000.0f);
+        float32_t cpu_utilization = (float32_t)cycles / (600000000UL / 1000.0f);
         
-        char perf_msg[100];
-        sprintf(perf_msg, "CPU: %.1f%%, Cycles: %"PRIu32", Buffer: %"PRIu32"/%d\n", 
+        char perf_msg[128];
+        int result = snprintf(perf_msg, sizeof(perf_msg), "CPU: %.1f%%, Cycles: %"PRIu32", Buffer: %"PRIu32"/%d\n", 
                 cpu_utilization * 100.0f, cycles, bufferIndex, ADS1299_SIGNAL_WINDOW);
-        UART_Transmit(perf_msg);
+        if (result > 0 && result < (int)sizeof(perf_msg)) {
+            UART_Transmit(perf_msg);
+        }
     }
     
     last_counter = current_counter;
@@ -329,7 +331,7 @@ void performance_monitor(void)
 void print_system_info(void)
 {
     UART_Transmit("STM32H7S3L8 EMG System Information:\n");
-    UART_Transmit("- CPU: ARM Cortex-M7 @ 550MHz\n");
+    UART_Transmit("- CPU: ARM Cortex-M7 @ 600MHz\n");
     UART_Transmit("- Flash: 2MB, RAM: 1MB (distributed)\n");
     UART_Transmit("- Cache: 32KB I-Cache + 32KB D-Cache\n");
     UART_Transmit("- EMG Channels: 8 @ 1kHz sampling\n");

@@ -326,9 +326,11 @@ void ads1299_configure_channels_from_settings()
         ads1299_write_reg(CH1SET + i, ch_config);
     }
     
-    char msg[50];
-    sprintf(msg, "Channels configured: 0x%02X\n", (uint8_t)BIOEXG_SETTINGS);
-    UART_Transmit(msg);
+    char msg[64];
+    int result = snprintf(msg, sizeof(msg), "Channels configured: 0x%02X\n", (uint8_t)BIOEXG_SETTINGS);
+    if (result > 0 && result < (int)sizeof(msg)) {
+        UART_Transmit(msg);
+    }
 }
 
 void ads1299_self_test()
@@ -338,15 +340,19 @@ void ads1299_self_test()
     
     // Test ID register
     uint8_t id = ads1299_read_reg(ID);
-    char msg[50];
-    sprintf(msg, "ADS1299 ID: 0x%02X (Expected: 0x3E)\n", id);
-    UART_Transmit(msg);
+    char msg[64];
+    int result = snprintf(msg, sizeof(msg), "ADS1299 ID: 0x%02X (Expected: 0x3E)\n", id);
+    if (result > 0 && result < (int)sizeof(msg)) {
+        UART_Transmit(msg);
+    }
     
     // Test configuration registers
     ads1299_write_reg(CONFIG1, 0x55);
     uint8_t config1 = ads1299_read_reg(CONFIG1);
-    sprintf(msg, "CONFIG1 write/read test: 0x%02X\n", config1);
-    UART_Transmit(msg);
+    result = snprintf(msg, sizeof(msg), "CONFIG1 write/read test: 0x%02X\n", config1);
+    if (result > 0 && result < (int)sizeof(msg)) {
+        UART_Transmit(msg);
+    }
     
     // Restore proper configuration
     ads1299_write_reg(CONFIG1, 0x94);

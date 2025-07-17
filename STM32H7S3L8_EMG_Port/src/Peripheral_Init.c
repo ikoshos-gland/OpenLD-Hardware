@@ -39,50 +39,68 @@ void init_SystemClock(void)
     RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
     // Configure the main internal regulator output voltage (STM32H7RS)
-    // Note: PWR clock is always enabled in STM32H7RS
-    HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
+    // Supply configuration update
+    HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY);
+    
+    // Configure voltage scaling to Scale 1 (1.25V core voltage)
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+    
+    // Wait for voltage scaling to be ready
+    while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
     // Configure LSE Drive Capability
     HAL_PWR_EnableBkUpAccess();
     __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
 
     // Initialize the RCC Oscillators
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48 | RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
     RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-    RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
-    // STM32H7RS uses PLL1 structure instead of PLL
+    
+    // STM32H7RS PLL1 configuration for 600MHz SYSCLK
     RCC_OscInitStruct.PLL1.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL1.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL1.PLLM = 2;       // 25MHz/2 = 12.5MHz
-    RCC_OscInitStruct.PLL1.PLLN = 88;      // 12.5MHz * 88 = 1100MHz
-    RCC_OscInitStruct.PLL1.PLLP = 2;       // 1100MHz/2 = 550MHz (SYSCLK)
-    RCC_OscInitStruct.PLL1.PLLQ = 4;       // 1100MHz/4 = 275MHz
-    RCC_OscInitStruct.PLL1.PLLR = 2;       // 1100MHz/2 = 550MHz
-    RCC_OscInitStruct.PLL1.PLLS = 2;       // 1100MHz/2 = 550MHz (new in H7RS)
-    RCC_OscInitStruct.PLL1.PLLT = 2;       // 1100MHz/2 = 550MHz (new in H7RS)
-    RCC_OscInitStruct.PLL1.PLLFractional = 0;  // Renamed from PLLFRACN
+    RCC_OscInitStruct.PLL1.PLLM = 5;       // 25MHz/5 = 5MHz (VCO input)
+    RCC_OscInitStruct.PLL1.PLLN = 120;     // 5MHz * 120 = 600MHz (VCO output)
+    RCC_OscInitStruct.PLL1.PLLP = 1;       // 600MHz/1 = 600MHz (SYSCLK)
+    RCC_OscInitStruct.PLL1.PLLQ = 2;       // 600MHz/2 = 300MHz
+    RCC_OscInitStruct.PLL1.PLLR = 2;       // 600MHz/2 = 300MHz
+    RCC_OscInitStruct.PLL1.PLLFractional = 0;  // No fractional part
     
     // Disable PLL2 and PLL3 (not used)
     RCC_OscInitStruct.PLL2.PLLState = RCC_PLL_NONE;
     RCC_OscInitStruct.PLL3.PLLState = RCC_PLL_NONE;
-    HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+        Error_Handler();
+    }
+
+    // Enable Over-Drive mode for 600MHz operation
+    if (HAL_PWREx_EnableOverDrive() != HAL_OK) {
+        Error_Handler();
+    }
 
     // Initialize the CPU, AHB and APB bus clocks
     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
                                   RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;      // 550MHz/2 = 275MHz
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLL1;
+    RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;    // 600MHz
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;      // 600MHz/2 = 300MHz
     // STM32H7RS uses simplified APB structure
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;     // 275MHz/2 = 137.5MHz
-    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;     // 275MHz/2 = 137.5MHz
-    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4);
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;     // 300MHz/2 = 150MHz
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;     // 300MHz/2 = 150MHz
+    
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6) != HAL_OK) {
+        Error_Handler();
+    }
 
     // Configure peripheral clocks
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SPI1 | RCC_PERIPHCLK_USART1;
     PeriphClkInit.Spi1ClockSelection = RCC_SPI1CLKSOURCE_PLL1Q;
-    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;  // Fixed for H7RS
-    HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+    
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK) {
+        Error_Handler();
+    }
 }
 
 void init_MPU(void)
@@ -301,7 +319,7 @@ void init_SPI(void)
     hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;    // CPOL = 0
     hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;        // CPHA = 1
     hspi1.Init.NSS = SPI_NSS_SOFT;
-    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;  // 137.5MHz/8 = 17.2MHz
+    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;  // 150MHz/8 = 18.75MHz
     hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
     hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
     hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
